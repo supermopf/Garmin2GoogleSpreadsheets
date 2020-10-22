@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
-import time
+import logging
+import os.path
+import pickle
+from datetime import date, datetime
 
+import google.auth.transport.requests
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
 from garminconnect import (
     Garmin,
     GarminConnectConnectionError,
     GarminConnectTooManyRequestsError,
     GarminConnectAuthenticationError,
 )
+
 import config
-import pickle
-import os.path
-import googleapiclient.discovery
-import google_auth_oauthlib.flow
-import google.auth.transport.requests
 
-from datetime import date
-
-import logging
 logging.basicConfig(level=logging.ERROR)
 
 today = date.today()
@@ -48,7 +47,10 @@ except Exception:  # pylint: disable=broad-except
     quit()
 
 weightList = client.fetch_data(
-    "https://connect.garmin.com/modern/proxy/weight-service/weight/daterangesnapshot?startDate=2000-01-01&endDate=" + today.isoformat())
+    "https://connect.garmin.com/modern/proxy/weight-service/weight/daterangesnapshot"
+    "?startDate=2000-01-01&endDate={0}".format(
+        today.isoformat())
+)
 weightList = weightList["dateWeightList"]
 
 result = []
@@ -56,7 +58,7 @@ result = []
 for weightListItem in weightList:
     if weightListItem['boneMass'] is not None:
         row = (
-            time.strptime(weightListItem['date'], "%x"),
+            datetime.fromtimestamp(weightListItem['date'] / 1e3).strftime("%d.%m.%Y"),
             (weightListItem['weight'] / 1000),
             weightListItem['bmi'],
             weightListItem['bodyFat'],
@@ -65,8 +67,6 @@ for weightListItem in weightList:
             (weightListItem['muscleMass'] / 1000),
         )
         result.append(row)
-
-print(result)
 
 creds = None
 # The file token.pickle stores the user's access and refresh tokens, and is
