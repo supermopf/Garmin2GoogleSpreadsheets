@@ -93,12 +93,12 @@ service = googleapiclient.discovery.build('sheets', 'v4', credentials=creds)
 sheet = service.spreadsheets()
 
 value_range_body = {
-    "range": "Import!A2:G",
+    "range": config.spreadsheet["RANGE_NAME"],
     "majorDimension": 'ROWS',
     "values": result
 }
 request = sheet.values().update(spreadsheetId=config.spreadsheet['SPREADSHEET_ID'],
-                                range="Import!A2:G",
+                                range=config.spreadsheet["RANGE_NAME"],
                                 valueInputOption="USER_ENTERED",
                                 body=value_range_body)
 response = request.execute()
