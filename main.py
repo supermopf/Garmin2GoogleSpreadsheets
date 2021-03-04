@@ -46,6 +46,9 @@ except Exception:  # pylint: disable=broad-except
     print("Unknown error occurred during Garmin Connect Client login")
     quit()
 
+# Garmin requires this Header (HTTP 402 Fix)
+client.headers['nk'] = 'NT'
+
 weightList = client.fetch_data(
     "https://connect.garmin.com/modern/proxy/weight-service/weight/daterangesnapshot"
     "?startDate=2000-01-01&endDate={0}".format(

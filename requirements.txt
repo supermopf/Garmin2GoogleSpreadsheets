@@ -1,7 +1,7 @@
 cachetools==4.1.1
 certifi==2020.6.20
 chardet==3.0.4
-garminconnect==0.1.16
+garminconnect==0.1.19
 google-api-core==1.23.0
 google-api-python-client==1.12.4
 google-auth==1.22.1
